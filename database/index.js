@@ -13,7 +13,7 @@ class DB {
 
   findAllPossibleManagers(employeeId) {
     return this.connection.query(
-      "SELECT id, first_name, last_name FROM employee WHERE id != ?",
+      "SELECT * FROM employee WHERE id != ?",
       employeeId
     );
   }
@@ -84,7 +84,7 @@ class DB {
  // Find all employees by manager
  findAllEmployeesByManager(managerId) {
     return this.connection.query(
-      "SELECT employee.id, employee.first_name, employee.last_name, department.name AS department, role.title FROM employee LEFT JOIN role on role.id = employee.role_id LEFT JOIN department ON department.id = role.department_id WHERE manager_id = ?;",
+      "SELECT employee.*, department.name AS department, role.title FROM employee LEFT JOIN role on role.id = employee.role_id LEFT JOIN department ON department.id = role.department_id WHERE manager_id = ?;",
       managerId
     );
   }
@@ -92,7 +92,7 @@ class DB {
   // Find all employees by Department
   findAllEmployeesByDepartment(departmentId) {
     return this.connection.query(
-      "SELECT employee.id, employee.first_name, employee.last_name, role.title FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department department on role.department_id = department.id WHERE department.id = ?;",
+      "SELECT employee.*, role.title FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department department on role.department_id = department.id WHERE department.id = ?;",
       departmentId
     );
   }

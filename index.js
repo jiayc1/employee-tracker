@@ -3,18 +3,24 @@ const logo = require("asciiart-logo");
 const db = require("./database");
 require("console.table");
 
-init();
-
-
-function init() {
-  const logoText = logo({ name: "HR" }).render();
-
-  console.log(logoText);
-
-  showQuestions();
+const actions = {
+  VIEW_EMPLOYEES: 'viewEmployees',
+  VIEW_EMPLOYEES_BY_DEPARTMENT: 'viewEmployeesByDept',
+  VIEW_EMPLOYEES_BY_MANAGER: 'viewEmployeesByMgr',
+  ADD_EMPLOYEE: 'addEmployee',
+  REMOVE_EMPLOYEE: 'removeEmployee',
+  UPDATE_EMPLOYEE_ROLE: 'updateEmployeeRole',
+  UPDATE_EMPLOYEE_MANAGER: 'updateEmployeeMgr',
+  VIEW_DEPARTMENTS: 'viewDept',
+  ADD_DEPARTMENT: 'addDept',
+  REMOVE_DEPARTMENT: 'removeDept',
+  VIEW_ROLES: 'viewRoles',
+  ADD_ROLE: 'addRole',
+  REMOVE_ROLE: 'removeRole',
+  EXIT: 'exit',
 }
 
-async function showQuestions() {
+const questions = async () => {
   const { choice } = await prompt([
     {
       type: "list",
@@ -23,59 +29,59 @@ async function showQuestions() {
       choices: [
         {
           name: "View All Company Employees",
-          value: "VIEW_EMPLOYEES"
+          value: actions.VIEW_EMPLOYEES
         },
         {
           name: "View THE Employees By Department",
-          value: "VIEW_EMPLOYEES_BY_DEPARTMENT"
+          value: actions.VIEW_EMPLOYEES_BY_DEPARTMENT
         },
         {
           name: "View THE Employees By Manager",
-          value: "VIEW_EMPLOYEES_BY_MANAGER"
+          value: actions.VIEW_EMPLOYEES_BY_MANAGER
         },
         {
           name: "Add Employee",
-          value: "ADD_EMPLOYEE"
+          value: actions.ADD_EMPLOYEE
         },
         {
           name: "Remove Employee",
-          value: "REMOVE_EMPLOYEE"
+          value: actions.REMOVE_EMPLOYEE
         },
         {
           name: "Update Role of Employee",
-          value: "UPDATE_EMPLOYEE_ROLE"
+          value: actions.UPDATE_EMPLOYEE_ROLE
         },
         {
           name: "Update Employee Manager",
-          value: "UPDATE_EMPLOYEE_MANAGER"
+          value: actions.UPDATE_EMPLOYEE_MANAGER
         },
         {
           name: "View All Roles",
-          value: "VIEW_ROLES"
+          value: actions.VIEW_ROLES
         },
         {
           name: "Add Role",
-          value: "ADD_ROLE"
+          value: actions.ADD_ROLE
         },
         {
           name: "Remove Role",
-          value: "REMOVE_ROLE"
+          value: actions.REMOVE_ROLE
         },
         {
           name: "View All Departments",
-          value: "VIEW_DEPARTMENTS"
+          value: actions.VIEW_DEPARTMENTS
         },
         {
           name: "Add Department",
-          value: "ADD_DEPARTMENT"
+          value: actions.ADD_DEPARTMENT
         },
         {
           name: "Remove Department",
-          value: "REMOVE_DEPARTMENT"
+          value: actions.REMOVE_DEPARTMENT
         },
         {
           name: "EXIT",
-          value: "EXIT"
+          value: actions.EXIT
         }
       ]
     }
@@ -83,48 +89,59 @@ async function showQuestions() {
 
   // Call the appropriate function depending on what the user chose
   switch (choice) {
-    case "VIEW_EMPLOYEES":
+    case actions.VIEW_EMPLOYEES:
       return showEmployees();
-    case "VIEW_EMPLOYEES_BY_DEPARTMENT":
+    case actions.VIEW_EMPLOYEES_BY_DEPARTMENT:
       return showEmployeesByDept();
-    case "VIEW_EMPLOYEES_BY_MANAGER":
-      return ShowEmployeesByManager();
-    case "ADD_EMPLOYEE":
+    case actions.VIEW_EMPLOYEES_BY_MANAGER:
+      return showEmployeesByMgr();
+    case actions.ADD_EMPLOYEE:
       return addEmployee();
-    case "REMOVE_EMPLOYEE":
+    case actions.REMOVE_EMPLOYEE:
       return deleteEmployee();
-    case "UPDATE_EMPLOYEE_ROLE":
+    case actions.UPDATE_EMPLOYEE_ROLE:
       return updateEmployeeRole();
-    case "UPDATE_EMPLOYEE_MANAGER":
-      return changeEmployeeManager();
-    case "VIEW_DEPARTMENTS":
+    case actions.UPDATE_EMPLOYEE_MANAGER:
+      return changeEmployeeMgr();
+    case actions.VIEW_DEPARTMENTS:
       return viewDepartments();
-    case "ADD_DEPARTMENT":
+    case actions.ADD_DEPARTMENT:
       return addDepartment();
-    case "REMOVE_DEPARTMENT":
+    case actions.REMOVE_DEPARTMENT:
       return removeDepartment();
-    case "VIEW_ROLES":
+    case actions.VIEW_ROLES:
       return viewRoles();
-    case "ADD_ROLE":
+    case actions.ADD_ROLE:
       return addRole();
-    case "REMOVE_ROLE":
+    case actions.REMOVE_ROLE:
       return removeRole();
-    case "EXIT":
+    case actions.EXIT:
     default:
       return quit();
   }
 }
 
-async function showEmployees() {
+
+start();
+
+function start() {
+  const Text = logo({ name: "HR Employee Tracker" }).render();
+
+  console.log(Text);
+
+  questions();
+}
+
+const showEmployees = async () => {
   const employees = await db.findAllEmployees();
 
   console.log("\n");
   console.table(employees);
 
-  showQuestions();
+  questions();
 }
 
-async function showEmployeesByDept() {
+const showEmployeesByDept = async () => {
   const departments = await db.findAllDepartments();
 
   const departmentChoices = departments.map(({ id, name }) => ({
@@ -146,10 +163,10 @@ async function showEmployeesByDept() {
   console.log("\n");
   console.table(employees);
 
-  showQuestions();
+  questions();
 }
 
-async function ShowEmployeesByManager() {
+const showEmployeesByMgr = async () => {
   const managers = await db.findAllEmployees();
 
   const managerChoices = managers.map(({ id, first_name, last_name }) => ({
@@ -176,10 +193,10 @@ async function ShowEmployeesByManager() {
     console.table(employees);
   }
 
-  showQuestions();
+  questions();
 }
 
-async function deleteEmployee() {
+const deleteEmployee = async () => {
   const employees = await db.findAllEmployees();
 
   const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
@@ -200,10 +217,10 @@ async function deleteEmployee() {
 
   console.log("Deleted employee from the employees database");
 
-  showQuestions();
+  questions();
 }
 
-async function updateEmployeeRole() {
+const updateEmployeeRole = async () => {
   const employees = await db.findAllEmployees();
 
   const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
@@ -240,10 +257,10 @@ async function updateEmployeeRole() {
 
   console.log("Updated employee's role");
 
-  showQuestions();
+  questions();
 }
 
-async function changeEmployeeManager() {
+const changeEmployeeMgr = async () => {
   const employees = await db.findAllEmployees();
 
   const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
@@ -281,19 +298,19 @@ async function changeEmployeeManager() {
 
   console.log("Updated employee's manager");
 
-  showQuestions();
+  questions();
 }
 
-async function viewRoles() {
+const viewRoles = async () => {
   const roles = await db.findAllRoles();
 
   console.log("\n");
   console.table(roles);
 
-  showQuestions();
+  questions();
 }
 
-async function addRole() {
+const addRole = async () => {
   const departments = await db.findAllDepartments();
 
   const departmentChoices = departments.map(({ id, name }) => ({
@@ -322,10 +339,10 @@ async function addRole() {
 
   console.log(`Added ${role.title} to the database`);
 
-  showQuestions();
+  questions();
 }
 
-async function removeRole() {
+const removeRole = async () => {
   const roles = await db.findAllRoles();
 
   const roleChoices = roles.map(({ id, title }) => ({
@@ -347,19 +364,19 @@ async function removeRole() {
 
   console.log("Removed the role from database");
 
-  showQuestions();
+  questions();
 }
 
-async function viewDepartments() {
+const viewDepartments = async () => {
   const departments = await db.findAllDepartments();
 
   console.log("\n");
   console.table(departments);
 
-  showQuestions();
+  questions();
 }
 
-async function addDepartment() {
+const addDepartment = async () => {
   const department = await prompt([
     {
       name: "name",
@@ -371,10 +388,10 @@ async function addDepartment() {
 
   console.log(`Added ${department.name} to the database`);
 
-  showQuestions();
+  questions();
 }
 
-async function removeDepartment() {
+const removeDepartment = async () => {
   const departments = await db.findAllDepartments();
 
   const departmentChoices = departments.map(({ id, name }) => ({
@@ -394,10 +411,10 @@ async function removeDepartment() {
 
   console.log(`Deleted department from the database`);
 
-  showQuestions();
+  questions();
 }
 
-async function addEmployee() {
+const addEmployee = async () => {
   const roles = await db.findAllRoles();
   const employees = await db.findAllEmployees();
 
@@ -447,10 +464,10 @@ async function addEmployee() {
     `Added ${employee.first_name} ${employee.last_name} to the employee database`
   );
 
-  showQuestions();
+  questions();
 }
 
-function quit() {
+const quit = () => {
   console.log("Thanks for using this!");
   process.exit();
 }
